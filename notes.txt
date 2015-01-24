@@ -1,0 +1,87 @@
+basically you have an address: jeff@server.com
+this is where you post to
+when you start your client, you scrape all your followed people for tweets
+shows up in your feed
+client can expand urls, show inline pics/videos etc.
+
+protocol is maybe something like "finger"
+
+
+----------------------------------------
+to query for tweets:
+
+client opens tcp port, sends:
+
+OT v1\r\n
+<name>\r\n
+<from>\r\n
+<to>\r\n
+
+
+name is plain ascii name, printable chars (0x20-0x7E), max 32 chars?
+from is unix epoch time, always required, inclusive
+to is unix epoch time, exclusive, or "now" to get the latest
+
+unix epoch time is a sequence of ASCII digits (0x30-0x39), nothing else
+max 11 digits: Wed, 16 Nov 5138 09:46:39 GMT
+
+sever returns:
+
+<timestamp>\r\n
+<tweet text>\r\n
+
+from 0-n times
+
+close connection
+
+tweets may never have \r\n in them
+may have:
+  printable ASCII 0x20-0x7E
+  LF 0x09
+  TAB 0x0A
+max 140 chars
+
+
+
+above is fully baked standard, etc
+------------------------------------------------------
+
+sever will usually need some way for a user to post tweets, (unless the client and server are one program?)
+
+this will be a standard modern REST api over https for my server
+
+
+---
+PUT /users
+
+{
+  "user":"<myname>",
+  "password":"<mypassword>"
+}
+
+returns ok or 
+error if user exists, password or name invalid, etc
+
+---
+
+PUT /login
+
+{
+  "user":"<myname>",
+  "password":"<mypassword>"
+}
+
+return auth token
+
+-----------------
+
+POST /tweet
+(with auth headers including token)
+
+{
+  "tweet":"<tweet text>"
+}
+
+returns ok or
+error if auth inalid, tweet invalid, etc.
+
