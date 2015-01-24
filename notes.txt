@@ -37,8 +37,8 @@ close connection
 tweets may never have \r\n in them
 may have:
   printable ASCII 0x20-0x7E
-  LF 0x09
-  TAB 0x0A
+  LF 0x0A (\n)
+  TAB 0x09
 max 140 chars
 
 
