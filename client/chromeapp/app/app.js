@@ -10,7 +10,7 @@ angular
 			},
 			parse: function(data) {
 				var username = data.split(/@/);
-				var server = username[1].split('')
+				var server = username[1].split(':');
 				return {
 					username: username[0],
 					server: server[0],
@@ -19,7 +19,7 @@ angular
 			}
 		}
 	}])
-	.factory('Tweets', ['$q', function($q) {
+	.factory('Tweets', ['$q', 'User', function($q, User) {
 		return {
 			get: function(user, from, to, callbacks) {
 				var defer = $q.defer();

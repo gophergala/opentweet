@@ -19,23 +19,34 @@
 			<div class="h1 title">OpenTweet</div>
 			<button class="button button-clear button-positive">Edit</button>
 		</div>
-		<ion-content class="has-header" ng-controller="TweetListCtrl">
-			<ion-refresher pulling-text="Pull to refresh..." on-refresh="doRefresh()"></ion-refresher>
-			<ion-list>
-				<ion-item ng-repeat="tweet in tweetsFromWhoIFollow track by $index" class="item">
-					{{tweet}}
-				</ion-item>
-				<ion-item class="item" ng-if="tweetsFromWhoIFollow.length===0">
-					<div class="card" style="text-align:center">
-						<div class="item item-text-wrap">
-							<h1> <i class="icon ion-alert-circled"></i>
-							</h1>
-							Could not load any tweets. Please pull to refresh, or follow some people to see more tweets.
-						</div>
-					</div>
-				</ion-item>
-			</ion-list>
-		</ion-content>
+		<ion-tabs class="tabs-positive tabs-icon-only has-header">
+			<ion-tab title="Home" icon-on="ion-ios7-filing" icon-off="ion-ios7-filing-outline" ng-controller="TweetListCtrl">
+				<ion-scroll class="has-header">
+					<ion-refresher pulling-text="Pull to refresh..." on-refresh="doRefresh()"></ion-refresher>
+					<ion-list>
+						<ion-item ng-repeat="tweet in tweetsFromWhoIFollow track by $index" class="item item-avatar">
+							<img/>
+							<h2>{{tweet.user}}<small>{{tweet.timestamp}}</small></h2>
+							<p>{{tweet.tweet}}</p>
+						</ion-item>
+						<ion-item class="item" ng-if="tweetsFromWhoIFollow.length===0">
+							<div class="card" style="text-align:center">
+								<div class="item item-text-wrap">
+									<h1> <i class="icon ion-alert-circled"></i>
+									</h1>
+									Could not load any tweets. Please pull to refresh, or follow some people to see more tweets.
+								</div>
+							</div>
+						</ion-item>
+					</ion-list>
+				</ion-scroll>
+			</ion-tab>
+
+			<ion-tab title="About" icon-on="ion-ios7-clock" icon-off="ion-ios7-clock-outline">Tab 2 Content</ion-tab>
+
+			<ion-tab title="Settings" icon-on="ion-ios7-gear" icon-off="ion-ios7-gear-outline">Tab 3 Content</ion-tab>
+
+		</ion-tabs>
 	</ion-pane>
 </body>
 </html>
