@@ -62,21 +62,10 @@ POST /users
 returns ok or 
 error if user exists, password or name invalid, etc
 
----
-
-PUT /login
-
-{
-  "user":"<myname>",
-  "password":"<mypassword>"
-}
-
-return auth token
-
 -----------------
 
 POST /tweet
-(with auth headers including token)
+needs basic auth of valid user
 
 {
   "tweet":"<tweet text>"

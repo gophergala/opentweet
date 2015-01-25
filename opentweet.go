@@ -8,14 +8,19 @@ import (
 )
 
 func main() {
-	go serveTweets()
-	serveRest()
+	db, err := database.NewDB()
+	if err != nil {
+		log.Fatalf("%v", err)
+	}
+	go serveTweets(db)
+	serveRest(db)
 }
 
-func serveRest() {
+func serveRest(db database.DB) {
 	log.Printf("serving rest?")
 	server := rest.NewServer()
-	err := server.RegisterUserCB(database.RegisterUser)
+	err := server.RegisterUserCB(db.RegisterUser)
+	err = server.RegisterTweetCB(db.PostTweet)
 	if err != nil {
 		log.Printf("%v", err)
 		return
@@ -26,7 +31,7 @@ func serveRest() {
 	}
 }
 
-func serveTweets() {
+func serveTweets(db database.DB) {
 	log.Printf("serving tweets?")
 	server := protocol.NewServer()
 	err := server.Register(database.GetTweets)
