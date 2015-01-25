@@ -9,10 +9,11 @@ import (
 
 func main() {
 	server := os.Args[1]
+	user := os.Args[2]
 	tweets, err := protocol.GetTweets(
 		server,
-		"asdf",
-		time.Now().Add(-5 * time.Minute),
+		user,
+		time.Now().Add(-24 * time.Hour),
 		time.Now(),
 	)
 	if err != nil {

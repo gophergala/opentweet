@@ -45,13 +45,31 @@ func NewDB() (DB, error) {
 	return newDB, nil
 }
 
-func GetTweets(name string, from, to time.Time) ([]protocol.Tweet, error) {
-	tweets := make([]protocol.Tweet, 5)
-	tweets[0] = protocol.Tweet{time.Now().Add(-5 * time.Minute), "t1"}
-	tweets[1] = protocol.Tweet{time.Now().Add(-4 * time.Minute), "t2"}
-	tweets[2] = protocol.Tweet{time.Now().Add(-3 * time.Minute), "t3"}
-	tweets[3] = protocol.Tweet{time.Now().Add(-2 * time.Minute), "t4"}
-	tweets[4] = protocol.Tweet{time.Now().Add(-1 * time.Minute), "t5"}
+func (db DB) GetTweets(name string, from, to time.Time) ([]protocol.Tweet, error) {
+	//sql injection here
+	query := fmt.Sprintf("SELECT time, tweet FROM `%v` WHERE time BETWEEN ? AND ?;", name)
+	rows, err := db.db.Query(
+		query,
+		from.Unix(),
+		to.Unix(),
+	)
+	if err != nil {
+		return nil, fmt.Errorf("Error getting users tweets: %v", err)
+	}
+
+	tweets := make([]protocol.Tweet, 0)
+	for rows.Next() {
+		var timeStamp int64
+		var tweet string
+		err = rows.Scan(&timeStamp, &tweet)
+		if err != nil {
+			return nil, fmt.Errorf("Couldn't get tweets from db: %v", err)
+		}
+		tweets = append(tweets, protocol.Tweet{time.Unix(timeStamp, 0), tweet})
+	}
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("Row error: %v", err)
+	}
 	return tweets, nil
 }
 
@@ -67,6 +85,15 @@ func (db DB) RegisterUser(name, password string) error {
 	if err != nil {
 		return fmt.Errorf("Error inserting user: %v", err)
 	}
+
+	//sql injection here
+	query := fmt.Sprintf("CREATE TABLE `%v` (time BIGINT PRIMARY KEY, tweet VARCHAR(256))", name)
+	
+	_, err = db.db.Exec(query)
+	if err != nil {
+		return fmt.Errorf("Error creating user tweet table: %v", err)
+	}
+
 	return nil
 }
 
@@ -91,6 +118,17 @@ func (db DB) PostTweet(user, password, tweet string) error {
 
 	if password != dbPass {
 		return fmt.Errorf("Error invalid password")
+	}
+
+	//sql injection here
+	query := fmt.Sprintf("INSERT INTO `%v` (time, tweet) VALUES (?, ?);", user)
+	_, err = db.db.Exec(
+		query,
+		time.Now().Unix(),
+		tweet,
+	)
+	if err != nil {
+		return fmt.Errorf("Error inserting tweet: %v", err)
 	}
 
 	log.Printf("user %v posted tweet %v", user, tweet)

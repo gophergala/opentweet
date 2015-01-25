@@ -34,7 +34,7 @@ func serveRest(db database.DB) {
 func serveTweets(db database.DB) {
 	log.Printf("serving tweets?")
 	server := protocol.NewServer()
-	err := server.Register(database.GetTweets)
+	err := server.Register(db.GetTweets)
 	if err != nil {
 		log.Printf("%v", err)
 		return
