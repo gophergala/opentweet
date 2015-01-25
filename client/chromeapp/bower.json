@@ -16,6 +16,7 @@
     "tests"
   ],
   "dependencies": {
-    "moment": "~2.9.0"
+    "moment": "~2.9.0",
+    "ionic": "driftyco/ionic-bower#master"
   }
 }
