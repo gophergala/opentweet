@@ -16,6 +16,7 @@
     "tests"
   ],
   "dependencies": {
-    "ionic": "~0.9.27"
+    "ionic": "~0.9.27",
+    "moment": "~2.9.0"
   }
 }

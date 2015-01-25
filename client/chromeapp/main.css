@@ -1,0 +1,9 @@
+.tweet-list a.item:after{
+	display: none;
+}
+
+.tweet-list a.item .timestamp{
+	font-size: 80%;
+	color: #777;
+	float: right;
+}

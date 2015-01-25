@@ -6,8 +6,12 @@
 	<title>OpenTweet</title>
 
 	<link href="bower_components/ionic/release/css/ionic.css" rel="stylesheet">
+	<link href="main.css" rel="stylesheet">
 
 	<script src="bower_components/ionic/release/js/ionic.bundle.js"></script>
+	<script src="bower_components/moment/moment.js"></script>
+	<script src="bower_components/angular-moment/angular-moment.js"></script>
+
 	<script src="app/tcp-client.js"></script>
 	<script src="app/app.js" type="text/javascript"></script>
 
@@ -23,12 +27,15 @@
 			<ion-tab title="Home" icon-on="ion-ios7-filing" icon-off="ion-ios7-filing-outline" ng-controller="TweetListCtrl">
 				<ion-scroll class="has-header">
 					<ion-refresher pulling-text="Pull to refresh..." on-refresh="doRefresh()"></ion-refresher>
-					<ion-list>
-						<ion-item ng-repeat="tweet in tweetsFromWhoIFollow track by $index" class="item item-avatar">
-							<img/>
-							<h2>{{tweet.user}}<small>{{tweet.timestamp}}</small></h2>
+					<ion-list class="tweet-list">
+						<a href = "#" ng-repeat="tweet in tweetsFromWhoIFollow track by $index" class="item item-avatar item-text-wrap">
+							<img src="data:image/gif;base64,R0lGODdhUABQAOMAAMzMzJaWlrGxsZycnL6+vsXFxbe3t6qqqqOjowAAAAAAAAAAAAAAAAAAAAAAAAAAACwAAAAAUABQAAAE2BDISau9OOvNu/9gKI5kaZ5oqq5s675wLM90bd94ru987//AoHBILBqPyKRyyWw6n9CodEqtWq/YrHbLPQoCA4KEMBgUPt/wuHzeFQIGwUAyEBwOnnd8DqjfeW8EBnNvBQYBFQEBb4gTgYMAhYc9X3AABIuYFQUDCGYVlQaXmY07AXYIowWaFYeiiaiqrDqYq4iSpRMHAXgUtZq4gHAHfH69jnCLFHrEdHbHOoNql2yJqQi5ANJi1J9d3+Dh4uPk5ebn6Onq6+zt7u/w8fLz9PX29/j5+vvfEQA7"/>
+							<h2>
+								{{tweet.user | userName}}
+								<span class="timestamp">{{tweet.timestamp | fromNow}}</span>
+							</h2>
 							<p>{{tweet.tweet}}</p>
-						</ion-item>
+						</a>
 						<ion-item class="item" ng-if="tweetsFromWhoIFollow.length===0">
 							<div class="card" style="text-align:center">
 								<div class="item item-text-wrap">

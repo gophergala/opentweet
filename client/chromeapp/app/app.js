@@ -86,4 +86,13 @@ angular
 
 		$scope.doRefresh = update;
 		update();
-	}]);
+	}])
+	.filter('fromNow', function() {
+		return function(input) {
+			return moment(input).fromNow();
+		}
+	}).filter('userName', ['User', function(user) {
+		return function(input) {
+			return user.parse(input).username;
+		}
+	}])
