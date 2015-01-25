@@ -35,13 +35,13 @@ docker run --name opentweet -d --link mysql:mysql -p 12315:12315 -p 80:8080 open
 
 ````
 git clone https://github.com/gophergala/opentweet.git
-cd opentweet/client
+cd opentweet/client/chromeapp
 bower something???
 ````
 * In Chrome, go to `chrome://extensions/`
 * Check "Developer mode"
 * Click "Load unpacked extension..."
-* Select "opentweet/client" from where you cloned opentweet
+* Select "opentweet/client/chromeapp" from where you cloned opentweet
 
 ## Registering and posting tweets with Curl
 
