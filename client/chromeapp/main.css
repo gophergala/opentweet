@@ -1,9 +1,9 @@
-.tweet-list a.item:after{
-	display: none;
-}
-
-.tweet-list a.item .timestamp{
+.tweet-list .item .timestamp{
 	font-size: 80%;
 	color: #777;
 	float: right;
+}
+
+.tweet-list .item .item-text-wrap{
+	white-space: normal;
 }

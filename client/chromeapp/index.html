@@ -23,19 +23,19 @@
 			<div class="h1 title">OpenTweet</div>
 			<button class="button button-clear button-positive">Edit</button>
 		</div>
-		<ion-tabs class="tabs-positive tabs-icon-only has-header">
-			<ion-tab title="Home" icon-on="ion-ios7-filing" icon-off="ion-ios7-filing-outline" ng-controller="TweetListCtrl">
-				<ion-scroll class="has-header">
+		<ion-tabs class="tabs-positive tabs-icon-only">
+			<ion-tab title="Home" icon-on="ion-ios7-bookmarks" icon-off="ion-ios7-bookmarks-outline" ng-controller="TweetListCtrl">
+				<ion-content class="has-header">
 					<ion-refresher pulling-text="Pull to refresh..." on-refresh="doRefresh()"></ion-refresher>
 					<ion-list class="tweet-list">
-						<a href = "#" ng-repeat="tweet in tweetsFromWhoIFollow track by $index" class="item item-avatar item-text-wrap">
+						<ion-item ng-repeat="tweet in tweetsFromWhoIFollow track by $index" class="item item-text-wrap item-thumbnail-left">
 							<img src="data:image/gif;base64,R0lGODdhUABQAOMAAMzMzJaWlrGxsZycnL6+vsXFxbe3t6qqqqOjowAAAAAAAAAAAAAAAAAAAAAAAAAAACwAAAAAUABQAAAE2BDISau9OOvNu/9gKI5kaZ5oqq5s675wLM90bd94ru987//AoHBILBqPyKRyyWw6n9CodEqtWq/YrHbLPQoCA4KEMBgUPt/wuHzeFQIGwUAyEBwOnnd8DqjfeW8EBnNvBQYBFQEBb4gTgYMAhYc9X3AABIuYFQUDCGYVlQaXmY07AXYIowWaFYeiiaiqrDqYq4iSpRMHAXgUtZq4gHAHfH69jnCLFHrEdHbHOoNql2yJqQi5ANJi1J9d3+Dh4uPk5ebn6Onq6+zt7u/w8fLz9PX29/j5+vvfEQA7"/>
 							<h2>
 								{{tweet.user | userName}}
 								<span class="timestamp">{{tweet.timestamp | fromNow}}</span>
 							</h2>
-							<p>{{tweet.tweet}}</p>
-						</a>
+							<p class="item-text-wrap">{{tweet.tweet}}</p>
+						</ion-item>
 						<ion-item class="item" ng-if="tweetsFromWhoIFollow.length===0">
 							<div class="card" style="text-align:center">
 								<div class="item item-text-wrap">
@@ -46,12 +46,34 @@
 							</div>
 						</ion-item>
 					</ion-list>
-				</ion-scroll>
+				</ion-content>
 			</ion-tab>
 
-			<ion-tab title="About" icon-on="ion-ios7-clock" icon-off="ion-ios7-clock-outline">Tab 2 Content</ion-tab>
+			<ion-tab title="Follow" icon-on="ion-ios7-people" icon-off="ion-ios7-people-outline" ng-controller="FollowCtrl">
+				<ion-content class="has-header">
+					<div class="list list-inset">
+						<label class="item item-input">
+							<input type="text" placeholder="username@server:port" ng-model="user"/>
+						</label>
+						<button class="button button-block button-balanced" ng-click="follow(user)"> <i class="icon ion-person-add"></i>
+							Follow
+						</button>
+					</div>
 
-			<ion-tab title="Settings" icon-on="ion-ios7-gear" icon-off="ion-ios7-gear-outline">Tab 3 Content</ion-tab>
+					<div class="list list-inset">
+						<div class="item item-divider">You currently follow</div>
+						<div class="item item-button-right" ng-repeat="user in whoIFollow track by $index">
+							{{user}}
+							<button class="button button-assertive button-clear" ng-click="unfollow(user)">
+								<i class="icon ion-minus-circled"></i>
+							</button>
+						</div>
+						<div class="item" ng-if="whoIFollow.length === 0">Nobody. It is lonely here :(</div>
+					</div>
+				</ion-content>
+			</ion-tab>
+
+			<ion-tab title="Compose" icon-on="ion-ios7-gear" icon-off="ion-ios7-compose-gear">Tab 3 Content</ion-tab>
 
 		</ion-tabs>
 	</ion-pane>

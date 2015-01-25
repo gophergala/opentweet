@@ -1,12 +1,44 @@
 angular
-	.module('openTweet', ['ionic', 'tweetPage']);
+	.module('openTweet', ['ionic', 'tweetPage', 'followPage']);
 
 angular
 	.module('backend', [])
 	.factory('User', ['$q', function($q) {
+		function getWhoIFollow() {
+			var dfd = $q.defer();
+			chrome.storage.local.get({
+				whoIFollow: []
+			}, function(items) {
+				dfd.resolve(items.whoIFollow);
+			});
+			return dfd.promise;
+		}
+
+		function setWhoIFollow(people) {
+			var dfd = $q.defer();
+			chrome.storage.local.set({
+				whoIFollow: people
+			}, function() {
+				dfd.resolve();
+			});
+			return dfd.promise;
+		}
+
 		return {
-			whoIFollow: function() {
-				return $q.when(['axemclion@localhost:12315', 'jeff@localhost:12315']);
+			whoIFollow: getWhoIFollow,
+			followPerson: function(user) {
+				return getWhoIFollow().then(function(people) {
+					people.push(user);
+					return setWhoIFollow(people);
+				});
+			},
+			unFollowPerson: function(user) {
+				return getWhoIFollow().then(function(people) {
+					if (people.indexOf(user) !== -1) {
+						people.splice(people.indexOf(user), 1);
+					}
+					return setWhoIFollow(people);
+				});
 			},
 			parse: function(data) {
 				var username = data.split(/@/);
@@ -73,7 +105,6 @@ angular
 				var userCount = people.length;
 				angular.forEach(people, function(person) {
 					return tweets.get(person, 0, 0).then(function(tweets) {
-						console.log(tweets)
 						Array.prototype.push.apply($scope.tweetsFromWhoIFollow, tweets);
 					}).finally(function() {
 						if (--userCount === 0) {
@@ -83,7 +114,6 @@ angular
 				});
 			});
 		}
-
 		$scope.doRefresh = update;
 		update();
 	}])
@@ -95,4 +125,26 @@ angular
 		return function(input) {
 			return user.parse(input).username;
 		}
-	}])
+	}]);
+
+angular
+	.module('followPage', ['backend', 'ionic'])
+	.controller('FollowCtrl', ['User', '$ionicPopup', '$scope',
+		function(User, $ionicPopup, $scope) {
+			$scope.follow = function(user) {
+				User.followPerson(user).then(function() {
+					$scope.whoIFollow.push(user)
+				});
+			};
+			$scope.unfollow = function(user) {
+				User.unFollowPerson(user).then(refreshWhoIFollow);
+			};
+
+			function refreshWhoIFollow() {
+				User.whoIFollow().then(function(people) {
+					$scope.whoIFollow = people;
+				});
+			}
+			refreshWhoIFollow();
+		}
+	]);
