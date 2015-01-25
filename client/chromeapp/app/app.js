@@ -3,7 +3,7 @@ angular
 
 angular
 	.module('backend', [])
-	.factory('Settings', ['$q', function($q) {
+	.factory('Settings', ['$q', '$http', function($q, $http) {
 		function get() {
 			var dfd = $q.defer();
 			chrome.storage.local.get({
@@ -27,8 +27,23 @@ angular
 			},
 			fetch: get,
 			sendTweet: function(text) {
-				get().then(function() {
-					// TODO - Actually send the tweet
+				get().then(function(settings) {
+					// TODO - Server should allow CORS
+					return $http.post(settings.server + '/tweet', {
+						headers: {
+							'Authorization': 'Basic ' + window.btoa(settings.username + ':' + settings.password)
+						},
+						data: {
+							tweet: tweet
+						}
+					})
+				});
+			},
+			register: function(server, username, password) {
+				// TODO - Server should allow CORS
+				return $http.post(server + '/users', {
+					"user": username,
+					"password": password
 				});
 			}
 		}
@@ -88,7 +103,6 @@ angular
 				var defer = $q.defer();
 				var message = ['OT v1', user.username, from, to].join('\r\n') + '\r\n';
 				// TODO Fetch from actual servers
-				console.log(user);
 				var tcpClient = new TcpClient(user.server, user.port);
 				tcpClient.connect(function() {
 					var data = [];
@@ -160,7 +174,6 @@ angular
 		}
 	}).filter('userName', ['User', function(user) {
 		return function(input) {
-			console.log(input);
 			return user.parse(input).username;
 		}
 	}]);
@@ -206,6 +219,18 @@ angular
 				});
 			});
 		}
+
+		$scope.registerUser = function(server, username, password) {
+			Settings.register(server, username, password).then(function() {
+				$ionicPopup.alert({
+					title: 'Settings saved successfully',
+				});
+			}, function() {
+				$ionicPopup.alert({
+					title: 'Could not register new user on server',
+				});
+			})
+		};
 	}]);
 
 angular
