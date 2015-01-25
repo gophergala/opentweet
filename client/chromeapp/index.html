@@ -18,10 +18,10 @@
 </head>
 <body ng-app="openTweet">
 	<ion-pane>
-		<div class="bar bar-header bar-positive">
-			<button class="button button-icon icon ion-navicon"></button>
+		<div class="bar bar-header bar-positive" ng-controller="HeaderCtrl">
+			<button class="button button-icon icon ion-egg"></button>
 			<div class="h1 title">OpenTweet</div>
-			<button class="button button-clear button-positive">Edit</button>
+			<button class="button button-icon icon ion-ios7-compose"></button>
 		</div>
 		<ion-tabs class="tabs-positive tabs-icon-only">
 			<ion-tab title="Home" icon-on="ion-ios7-bookmarks" icon-off="ion-ios7-bookmarks-outline" ng-controller="TweetListCtrl">
@@ -73,8 +73,32 @@
 				</ion-content>
 			</ion-tab>
 
-			<ion-tab title="Compose" icon-on="ion-ios7-gear" icon-off="ion-ios7-compose-gear">Tab 3 Content</ion-tab>
-
+			<ion-tab title="Settings" icon-on="ion-ios7-gear" icon-off="ion-ios7-gear-outline" ng-controller="SettingsCtrl">
+				<ion-content class="has-header">
+					<div class="list">
+						<div class="item item-divider">
+							<i class="icon ion-ios7-gear" ></i>
+							&nbsp;Sending Tweets
+						</div>
+						<label class="item item-input item-stacked-label">
+							<span class="input-label">Server</span>
+							<input type="text" placeholder="servername:port" ng-model="server"/>
+						</label>
+						<label class="item item-input item-stacked-label">
+							<span class="input-label">Username</span>
+							<input type="text" placeholder="username" ng-model="username"/>
+						</label>
+						<label class="item item-input item-stacked-label">
+							<span class="input-label">Password</span>
+							<input type="password" ng-model="password"/>
+						</label>
+						<button class="button button-block button-balanced" style="width:90%;margin:10px auto" ng-click="saveSettings(server, username, password)">
+							<i class="icon ion-ios-download"></i>
+							Save Settings
+						</button>
+					</div>
+				</ion-content>
+			</ion-tab>
 		</ion-tabs>
 	</ion-pane>
 </body>

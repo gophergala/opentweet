@@ -1,8 +1,32 @@
 angular
-	.module('openTweet', ['ionic', 'tweetPage', 'followPage']);
+	.module('openTweet', ['ionic', 'header', 'tweetPage', 'followPage', 'settingsPage']);
 
 angular
 	.module('backend', [])
+	.factory('Settings', ['$q', function($q) {
+		return {
+			save: function(settings) {
+				var dfd = $q.defer();
+				chrome.storage.local.set({
+					settings: settings
+				}, dfd.resolve);
+				return dfd.promise;
+			},
+			fetch: function() {
+				var dfd = $q.defer();
+				chrome.storage.local.get({
+					settings: {
+						server: '',
+						username: '',
+						password: ''
+					}
+				}, function(items) {
+					dfd.resolve(items.settings);
+				});
+				return dfd.promise;
+			}
+		}
+	}])
 	.factory('User', ['$q', function($q) {
 		function getWhoIFollow() {
 			var dfd = $q.defer();
@@ -133,7 +157,7 @@ angular
 		function(User, $ionicPopup, $scope) {
 			$scope.follow = function(user) {
 				User.followPerson(user).then(function() {
-					$scope.whoIFollow.push(user)
+					$scope.whoIFollow.push(user);
 				});
 			};
 			$scope.unfollow = function(user) {
@@ -148,3 +172,30 @@ angular
 			refreshWhoIFollow();
 		}
 	]);
+
+angular
+	.module('settingsPage', ['backend', 'ionic'])
+	.controller('SettingsCtrl', ['Settings', '$ionicPopup', '$scope', function(Settings, $ionicPopup, $scope) {
+		Settings.fetch().then(function(settings) {
+			$scope.server = settings.server;
+			$scope.username = settings.username;
+			$scope.password = settings.password;
+		});
+		$scope.saveSettings = function(server, username, password) {
+			Settings.save({
+				username: username,
+				password: password,
+				server: server
+			}).then(function() {
+				$ionicPopup.alert({
+					title: 'Settings saved successfully',
+				});
+			});
+		}
+	}]);
+
+angular
+	.module('header', [])
+	.controller('HeaderCtrl', ['$scope', function() {
+
+	}]);
