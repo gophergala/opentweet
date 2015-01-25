@@ -2,14 +2,40 @@
 <html>
 <head>
 	<meta charset="utf-8">
+	<meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
 	<title>OpenTweet</title>
+
+	<link href="bower_components/ionic/release/css/ionic.css" rel="stylesheet">
+
+	<script src="bower_components/ionic/release/js/ionic.bundle.js"></script>
+	<script src="app/tcp-client.js"></script>
+	<script src="app/app.js" type="text/javascript"></script>
+
 </head>
-<body>
-	<button id="getTweets">Get Tweets</button>
-	<pre id="output"></pre>
-
-	<script src="tcp-client.js"></script>
-	<script src="main.js"></script>
-
+<body ng-app="openTweet">
+	<ion-pane>
+		<div class="bar bar-header">
+			<button class="button button-icon icon ion-navicon"></button>
+			<div class="h1 title">OpenTweet</div>
+			<button class="button button-clear button-positive">Edit</button>
+		</div>
+		<ion-content class="has-header" ng-controller="TweetListCtrl">
+			<ion-refresher pulling-text="Pull to refresh..." on-refresh="doRefresh()"></ion-refresher>
+			<ion-list>
+				<ion-item ng-repeat="tweet in tweetsFromWhoIFollow track by $index" class="item">
+					{{tweet}}
+				</ion-item>
+				<ion-item class="item" ng-if="tweetsFromWhoIFollow.length===0">
+					<div class="card" style="text-align:center">
+						<div class="item item-text-wrap">
+							<h1> <i class="icon ion-alert-circled"></i>
+							</h1>
+							Could not load any tweets. Please pull to refresh, or follow some people to see more tweets.
+						</div>
+					</div>
+				</ion-item>
+			</ion-list>
+		</ion-content>
+	</ion-pane>
 </body>
 </html>
