@@ -4,6 +4,19 @@ angular
 angular
 	.module('backend', [])
 	.factory('Settings', ['$q', function($q) {
+		function get() {
+			var dfd = $q.defer();
+			chrome.storage.local.get({
+				settings: {
+					server: '',
+					username: '',
+					password: ''
+				}
+			}, function(items) {
+				dfd.resolve(items.settings);
+			});
+			return dfd.promise;
+		}
 		return {
 			save: function(settings) {
 				var dfd = $q.defer();
@@ -12,18 +25,11 @@ angular
 				}, dfd.resolve);
 				return dfd.promise;
 			},
-			fetch: function() {
-				var dfd = $q.defer();
-				chrome.storage.local.get({
-					settings: {
-						server: '',
-						username: '',
-						password: ''
-					}
-				}, function(items) {
-					dfd.resolve(items.settings);
+			fetch: get,
+			sendTweet: function(text) {
+				get().then(function() {
+					// TODO - Actually send the tweet
 				});
-				return dfd.promise;
 			}
 		}
 	}])
@@ -70,19 +76,20 @@ angular
 				return {
 					username: username[0],
 					server: server[0],
-					port: server[1] || 80
+					port: server[1] || 12315
 				}
 			}
 		}
 	}])
 	.factory('Tweets', ['$q', 'User', function($q, User) {
 		return {
-			get: function(user, from, to, callbacks) {
+			get: function(personStr, from, to, callbacks) {
+				var user = User.parse(personStr);
 				var defer = $q.defer();
-				// TODO set the correct from and To
-				var message = ['OT v1', user, from, to].join('\r\n') + '\r\n';
+				var message = ['OT v1', user.username, from, to].join('\r\n') + '\r\n';
 				// TODO Fetch from actual servers
-				var tcpClient = new TcpClient('localhost', 12315);
+				console.log(user);
+				var tcpClient = new TcpClient(user.server, user.port);
 				tcpClient.connect(function() {
 					var data = [];
 					tcpClient.addResponseListener(function(response) {
@@ -106,7 +113,7 @@ angular
 							var result = [];
 							for (var i = 0; i < data.length - 1; i += 2) {
 								result.push({
-									user: user,
+									user: personStr,
 									timestamp: new Date(parseInt(data[i], 10)),
 									tweet: data[i + 1]
 								});
@@ -125,15 +132,19 @@ angular
 	.module('tweetPage', ['backend'])
 	.controller('TweetListCtrl', ['Tweets', 'User', '$scope', function(tweets, user, $scope) {
 		$scope.tweetsFromWhoIFollow = [];
+		$scope.lastFetchTime = moment().subtract(1, 'day').toDate().getTime();
 
 		function update() {
 			user.whoIFollow().then(function(people) {
 				var userCount = people.length;
+				var now = new Date().getTime();
+
 				angular.forEach(people, function(person) {
-					return tweets.get(person, 0, 0).then(function(tweets) {
+					return tweets.get(person, $scope.lastFetchTime, now).then(function(tweets) {
 						Array.prototype.push.apply($scope.tweetsFromWhoIFollow, tweets);
 					}).finally(function() {
 						if (--userCount === 0) {
+							$scope.lastFetchTime = now;
 							$scope.$broadcast('scroll.refreshComplete');
 						}
 					})
@@ -149,6 +160,7 @@ angular
 		}
 	}).filter('userName', ['User', function(user) {
 		return function(input) {
+			console.log(input);
 			return user.parse(input).username;
 		}
 	}]);
@@ -197,8 +209,8 @@ angular
 	}]);
 
 angular
-	.module('header', ['ionic'])
-	.controller('HeaderCtrl', function($scope, $ionicModal) {
+	.module('header', ['ionic', 'backend'])
+	.controller('HeaderCtrl', ['$scope', '$ionicModal', 'Settings', function($scope, $ionicModal, Settings) {
 		$ionicModal.fromTemplateUrl('compose.html', function(modal) {
 			$scope.compose = modal;
 		}, {
@@ -207,6 +219,7 @@ angular
 		});
 
 		$scope.sendTweet = function(text) {
-			// TODO - Send the acutal tweets
+			$scope.compose.hide();
+			Settings.sendTweet(text);
 		};
-	})
+	}]);

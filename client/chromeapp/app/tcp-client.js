@@ -43,7 +43,7 @@ Author: Boris Smus (smus@chromium.org)
     this.socketId = null;
     this.isConnected = false;
 
-    log('initialized tcp client');
+    this.log('initialized tcp client');
   }
 
   /**
@@ -147,10 +147,10 @@ Author: Boris Smus (smus@chromium.org)
     chrome.sockets.tcp.onReceiveError.addListener(this._onReceiveError);
 
     if (this.callbacks.connect) {
-      console.log('connect complete');
+      this.log('connect complete');
       this.callbacks.connect();
     }
-    log('onConnectComplete');
+    this.log('onConnectComplete');
   };
 
   /**
@@ -170,10 +170,10 @@ Author: Boris Smus (smus@chromium.org)
       return;
 
     if (this.callbacks.recv) {
-      log('onDataRead');
+      this.log('onDataRead');
       // Convert ArrayBuffer to string.
       //this._arrayBufferToString(receiveInfo.data, function(str) {
-        this.callbacks.recv(receiveInfo.data);
+      this.callbacks.recv(receiveInfo.data);
       //}.bind(this));
     }
   };
@@ -190,7 +190,7 @@ Author: Boris Smus (smus@chromium.org)
     if (info.socketId != this.socketId)
       return;
     if (this.callbacks.recvErr) {
-      log('onDataError');
+      this.log('onDataError');
       exports.setTimeout(function() {
         this.callbacks.recvErr(info);
       }.bind(this), 0);
@@ -205,7 +205,7 @@ Author: Boris Smus (smus@chromium.org)
    * @param {Object} sendInfo The outgoing message
    */
   TcpClient.prototype._onSendComplete = function(sendInfo) {
-    log('onSendComplete');
+    this.log('onSendComplete');
     // Call sent callback.
     if (this.callbacks.sent) {
       this.callbacks.sent(sendInfo);
@@ -250,14 +250,14 @@ Author: Boris Smus (smus@chromium.org)
   /**
    * Wrapper function for logging
    */
-  function log(msg) {
-    console.log(msg);
+  TcpClient.prototype.log = function(msg) {
+    console.log.apply(console, [this.host + ':' + this.port].concat(msg));
   }
 
   /**
    * Wrapper function for error logging
    */
-  function error(msg) {
+  TcpClient.prototype.error = function(msg) {
     console.error(msg);
   }
 
