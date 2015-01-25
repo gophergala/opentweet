@@ -1,12 +1,11 @@
 # opentweet
 This project is a few things
 
-1. Most importantly, a new internet application layer protocol for fetching tweets. This allows a standard for distributed fetching of tweets from any opentweet server.
+1. Most importantly, a new internet application layer protocol for fetching tweets. This allows a standard for distributed fetching of tweets from any opentweet server. See `opentweet-spec.txt`
 2. A reference implementation of that protocol, as a golang package in the `protocol/` dir
-3. A basic server to serve the tweets.
-4. A basic REST api to register with the server and post tweets
-5. An HTML5 client, in Chrome app and Cordova app form, for fetching opentweets and posting to a server. 
-6. A test client.
+3. A basic server to serve the tweets, allows registering and posting over REST.
+4. An HTML5 client, in Chrome app and Cordova app form, for fetching opentweets and posting to a server. 
+5. A test client.
 
 ## SECURITY WARNING!!!
 
@@ -33,10 +32,11 @@ docker run --name opentweet -d --link mysql:mysql -p 12315:12315 -p 80:8080 open
 
 ## Loading the Chrome App
 
+bower is needed http://bower.io/
 ````
 git clone https://github.com/gophergala/opentweet.git
 cd opentweet/client/chromeapp
-bower something???
+bower install
 ````
 * In Chrome, go to `chrome://extensions/`
 * Check "Developer mode"
