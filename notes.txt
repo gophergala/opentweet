@@ -52,7 +52,7 @@ this will be a standard modern REST api over https for my server
 
 
 ---
-PUT /users
+POST /users
 
 {
   "user":"<myname>",

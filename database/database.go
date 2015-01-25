@@ -3,6 +3,7 @@ package database
 import (
 	"github.com/gophergala/opentweet/protocol"
 	"time"
+	"log"
 )
 
 func GetTweets(name string, from, to time.Time) ([]protocol.Tweet, error) {
@@ -13,4 +14,9 @@ func GetTweets(name string, from, to time.Time) ([]protocol.Tweet, error) {
 	tweets[3] = protocol.Tweet{time.Now().Add(-2 * time.Minute), "t4"}
 	tweets[4] = protocol.Tweet{time.Now().Add(-1 * time.Minute), "t5"}
 	return tweets, nil
+}
+
+func RegisterUser (name, password string) error {
+	log.Printf("In db, got new user register: %v:%v", name, password)
+	return nil
 }
