@@ -1,5 +1,5 @@
 # opentweet
-This project is a few things
+This project is a few things, see `opentweet.png` for a diagram
 
 1. Most importantly, a new internet application layer protocol for fetching tweets. This allows a standard for distributed fetching of tweets from any opentweet server. See `opentweet-spec.txt`
 2. A reference implementation of that protocol, as a golang package in the `protocol/` dir
