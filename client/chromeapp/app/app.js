@@ -79,7 +79,9 @@ angular
 		return {
 			get: function(user, from, to, callbacks) {
 				var defer = $q.defer();
+				// TODO set the correct from and To
 				var message = ['OT v1', user, from, to].join('\r\n') + '\r\n';
+				// TODO Fetch from actual servers
 				var tcpClient = new TcpClient('localhost', 12315);
 				tcpClient.connect(function() {
 					var data = [];
@@ -195,7 +197,16 @@ angular
 	}]);
 
 angular
-	.module('header', [])
-	.controller('HeaderCtrl', ['$scope', function() {
+	.module('header', ['ionic'])
+	.controller('HeaderCtrl', function($scope, $ionicModal) {
+		$ionicModal.fromTemplateUrl('compose.html', function(modal) {
+			$scope.compose = modal;
+		}, {
+			scope: $scope,
+			animation: 'slide-in-down'
+		});
 
-	}]);
+		$scope.sendTweet = function(text) {
+			// TODO - Send the acutal tweets
+		};
+	})
