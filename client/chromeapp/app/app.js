@@ -21,21 +21,44 @@ angular
 	}])
 	.factory('Tweets', ['$q', function($q) {
 		return {
-			get: function(user, from, to) {
-				var deferred = $q.defer();
-
+			get: function(user, from, to, callbacks) {
+				var defer = $q.defer();
 				var message = ['OT v1', user, from, to].join('\r\n') + '\r\n';
 				var tcpClient = new TcpClient('localhost', 12315);
 				tcpClient.connect(function() {
-					tcpClient.addResponseListener(function(data) {
-						deferred.resolve(data.split(/\n/));
+					var data = [];
+					tcpClient.addResponseListener(function(response) {
+						data.push(response);
 					});
 					tcpClient.addResponseErrorListener(function() {
-						tcpClient.disconnect();
+						var len = data.map(function(d) {
+							return d.byteLength;
+						}).reduce(function(prev, curr) {
+							return prev + curr;
+						}, 0);
+
+						var tmp = new Uint8Array(len),
+							offset = 0;
+						data.forEach(function(d) {
+							tmp.set(new Uint8Array(d), offset);
+							offset += d.byteLength;
+						});
+						tcpClient._arrayBufferToString(tmp.buffer, function(str) {
+							var data = str.split('\r\n');
+							var result = [];
+							for (var i = 0; i < data.length - 1; i += 2) {
+								result.push({
+									user: user,
+									timestamp: new Date(parseInt(data[i], 10)),
+									tweet: data[i + 1]
+								});
+							}
+							defer.resolve(result);
+						});
 					});
 					tcpClient.sendMessage(message);
 				});
-				return deferred.promise;
+				return defer.promise;
 			}
 		}
 	}]);
@@ -47,11 +70,16 @@ angular
 
 		function update() {
 			user.whoIFollow().then(function(people) {
+				var userCount = people.length;
 				angular.forEach(people, function(person) {
 					return tweets.get(person, 0, 0).then(function(tweets) {
-						console.log(tweets);
+						console.log(tweets)
 						Array.prototype.push.apply($scope.tweetsFromWhoIFollow, tweets);
-					});
+					}).finally(function() {
+						if (--userCount === 0) {
+							$scope.$broadcast('scroll.refreshComplete');
+						}
+					})
 				});
 			});
 		}

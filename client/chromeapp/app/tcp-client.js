@@ -85,7 +85,7 @@ Author: Boris Smus (smus@chromium.org)
     this.callbacks.recv = callback;
   };
 
-   /**
+  /**
    * Sets the callback for when a message cannot be read. Could be because the socket was closed on the server
    *
    * @param {Function} callback The function to call when a message error occured
@@ -172,9 +172,9 @@ Author: Boris Smus (smus@chromium.org)
     if (this.callbacks.recv) {
       log('onDataRead');
       // Convert ArrayBuffer to string.
-      this._arrayBufferToString(receiveInfo.data, function(str) {
-        this.callbacks.recv(str);
-      }.bind(this));
+      //this._arrayBufferToString(receiveInfo.data, function(str) {
+        this.callbacks.recv(receiveInfo.data);
+      //}.bind(this));
     }
   };
 
@@ -191,7 +191,9 @@ Author: Boris Smus (smus@chromium.org)
       return;
     if (this.callbacks.recvErr) {
       log('onDataError');
-      this.callbacks.recvErr(info);
+      exports.setTimeout(function() {
+        this.callbacks.recvErr(info);
+      }.bind(this), 0);
     }
   };
 
