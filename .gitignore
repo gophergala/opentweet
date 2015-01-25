@@ -3,4 +3,4 @@ bower_components/
 node_modules/
 *~
 opentweet
-client/go-client/go-client
+test-client/test-client
