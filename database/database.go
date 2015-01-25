@@ -15,8 +15,8 @@ type DB struct {
 
 func NewDB() (DB, error) {
 	var newDB DB
-	//db, err := sql.Open("mysql", "root:mysecretpassword@tcp(mysql:3306)/")
-	db, err := sql.Open("mysql", "root:mysecretpassword@tcp(localhost:3306)/")
+	db, err := sql.Open("mysql", "root:mysecretpassword@tcp(mysql:3306)/")
+	//db, err := sql.Open("mysql", "root:mysecretpassword@tcp(localhost:3306)/")
 	if err != nil {
 		return newDB, fmt.Errorf("Error opening db: %v", err)
 	}
