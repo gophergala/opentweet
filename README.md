@@ -60,3 +60,13 @@ go install github.com/gophergala/opentweet/test-client
 $GOHOME/bin/test-client opentweet.cloudapp.net jeff
 ````
 
+
+## List of known servers
+
+`opentweet.cloudapp.net`
+
+## People to follow
+
+`jeff@opentweet.cloudapp.net`
+
+Please submit PRs for servers / people
