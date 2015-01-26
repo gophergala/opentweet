@@ -26,15 +26,26 @@ angular
 				return dfd.promise;
 			},
 			fetch: get,
-			sendTweet: function(text) {
+		    sendTweet: function(text) {
+			console.log(text)
 				get().then(function(settings) {
 					// TODO - Server should allow CORS
-					return $http.post(settings.server + '/tweet', {
+				    // return $http.post(settings.server + '/tweet', {
+				    // 	headers: {
+				    // 	    'Authorization': 'Basic ' + window.btoa(settings.username + ':' + settings.password)
+				    // 	},
+				    // 	data: {
+				    // 	    "tweet": text
+				    // 	}
+				    // })
+				    return $http({
+					method: 'POST',
+					url: settings.server + '/tweet',
 						headers: {
 							'Authorization': 'Basic ' + window.btoa(settings.username + ':' + settings.password)
 						},
 						data: {
-							tweet: tweet
+							"tweet": text
 						}
 					})
 				});
@@ -128,7 +139,7 @@ angular
 							for (var i = 0; i < data.length - 1; i += 2) {
 								result.push({
 									user: personStr,
-									timestamp: new Date(parseInt(data[i], 10)),
+									timestamp: new Date(parseInt(data[i], 10) * 1000),
 									tweet: data[i + 1]
 								});
 							}
@@ -243,6 +254,7 @@ angular
 
 		$scope.sendTweet = function(text) {
 			$scope.compose.hide();
-			Settings.sendTweet(text);
+		    console.log(text)
+		    Settings.sendTweet(text);
 		};
 	}]);
