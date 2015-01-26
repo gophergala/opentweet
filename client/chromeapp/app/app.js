@@ -146,13 +146,11 @@ angular
 	.module('tweetPage', ['backend'])
 	.controller('TweetListCtrl', ['Tweets', 'User', '$scope', function(tweets, user, $scope) {
 		$scope.tweetsFromWhoIFollow = [];
-		$scope.lastFetchTime = moment().subtract(1, 'day').toDate().getTime();
-
+		$scope.lastFetchTime = Math.round(moment().subtract(1, 'day').toDate().getTime()/1000.0);
 		function update() {
 			user.whoIFollow().then(function(people) {
 				var userCount = people.length;
-				var now = new Date().getTime();
-
+                        	var now = Math.round(new Date().getTime()/1000.0);
 				angular.forEach(people, function(person) {
 					return tweets.get(person, $scope.lastFetchTime, now).then(function(tweets) {
 						Array.prototype.push.apply($scope.tweetsFromWhoIFollow, tweets);
