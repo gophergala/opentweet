@@ -43,6 +43,10 @@ bower install
 * Click "Load unpacked extension..."
 * Select "opentweet/client/chromeapp" from where you cloned opentweet
 
+Or, instead of using bower, check the releases and download a zip from after 'bower install'
+
+Some notes on usage. Type the whole server name in your settings: `http://opentweet.cloudapp.net:80` Also, some icons are not showing up for me. Click around the bottom and top right to find all the tabs/pages.
+
 ## Registering and posting tweets with Curl
 
 ````
